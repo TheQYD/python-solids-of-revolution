@@ -9,6 +9,7 @@ from sympy import Integral, Symbol, sympify
 import math
 import sys
 
+axes = ('x', 'y')
 bump = "\n" + "-" * 80 + "\n"
 
 # If the axis of rotation is perpendicular to the functions:
@@ -19,16 +20,10 @@ def discMethod(functions, x, interval):
   g = functions[1]
   
   v = abs(f ** 2 - g ** 2)              # absolute value of f squared - g squared
-  print("f**2: ", v)
-
   v = Integral(v, (x, a, b)).doit()     # integrate f ** 2 - g ** 2
-  print("f_integrated: ", v)
-
   #v = math.pi * v                       # multiply by pi
   v = "pi " + str(v)
-  print("volume: ", v)
-
-  #return v
+  return v
 
 
 # If the axis of rotation is parellel to the functions:
@@ -48,7 +43,22 @@ def shellMethod(functions, x, interval):
 def determineBounds(f):
   return None
 
+# Determines what variable the function f is in terms of
+# Note: Invert function g if function f is in terms of another axis
+def parseFunctionVariables(functions):
+  function1 = functions[0]
+  function2 = functions[1]
 
+  # Conditionals for functions "f" and "g"
+  f1containsx = 'x' in function1.split() and 'y' not in function1.split()
+  f1containsy = 'y' in function1.split() and 'x' not in function1.split()
+
+  # Defining the independent variable
+  if f1containsx or f1containsy:
+    return 'x' if f1containsx else 'y'
+  else:
+    print("No variable given, exiting program.")
+    sys.exit(0)
 
 if __name__ == "__main__":
   print(bump)
@@ -56,51 +66,41 @@ if __name__ == "__main__":
   # Defining functions "f" and "g"
   function1 = input("The first function f: ")
   function2 = input("The second function g: ")
+  functions = [function1, function2]
 
-  # Conditionals for functions "f" and "g"
-  f1containsx = 'x' in function1.split() and 'y' not in function1.split()
-  f1containsy = 'y' in function1.split() and 'x' not in function1.split()
-  f2containsx = 'x' in function2.split() and 'y' not in function2.split()
-  f2containsy = 'y' in function2.split() and 'x' not in function2.split()
-
-  # Defining the independent variable
-  if f1containsx:
-    variable = Symbol('x')
-  elif f1containsy:
-    variable = Symbol('y')
-  else:
-    print("No variable given, exiting program.")
-    sys.exit(0)
+  variable = Symbol(parseFunctionVariables(functions))
 
   # Sympify functions "f" and "g"
-  function1 = sympify(function1)
-  function2 = sympify(function2)
+  functions[0] = sympify(functions[0])
+  functions[1] = sympify(functions[1])
 
   # Create list of functions
-  functions = [function1, function2]
+  #functions = [function1, function2]
 
   # Defining the interval
   upper_bound = input("from?: ")
   lower_bound = input("  to?: ")
   interval = [upper_bound, lower_bound]
-  print(interval)
 
 
   # Defining the axis of rotation
   axis = input("on the axis: ")
 
-  discMethod(functions, variable, interval)
-  
-'''
-  # Determines whether functions are parallel or perpendicular to axis
-  if axis == variable:
-    print("DISC!")
-    volume = discMethod(functions, variable, interval)    # <-- parallel
-  elif axis != variable:
-    volume = shellMethod(functions, variable, interval)   # <-- perpendicular
+  # Checking if axis is x or y
+  if axis in axes:
+    isParallel = str(axis) == str(variable)
+    isPerpendicular = str(axis) != str(variable)
   else:
     print("No axis given, exiting program.")
     sys.exit(0)
+
+  # Determines whether functions are parallel or perpendicular to axis
+  if isParallel:
+    print("DISC!")
+    volume = discMethod(functions, variable, interval)    # <-- parallel
+  elif isPerpendicular:
+    print("SHELL!")
+    volume = shellMethod(functions, variable, interval)   # <-- perpendicular
 
   # Print result
   print(bump)
@@ -108,4 +108,3 @@ if __name__ == "__main__":
   result = result.format(functions, axis, volume)
   print(result)
   print(bump)
-'''
