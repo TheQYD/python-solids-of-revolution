@@ -9,39 +9,35 @@ from sympy import Integral, Symbol, sympify
 import math
 import sys
 
-bump = "\n" + "-" * 50 + "\n"
+bump = "\n" + "-" * 80 + "\n"
 
-# If the axis of rotation is perpendicular to f:
+# If the axis of rotation is perpendicular to the functions:
 def discMethod(functions, x, interval):
   a = interval[0]
   b = interval[1]
   f = functions[0]
   g = functions[1]
 
-  v = f ** 2 - g ** 2                   # square f
+  v = abs(f ** 2 - g ** 2)              # absolute value of f squared - g squared
   v = Integral(v, (x, a, b)).doit()     # integrate f ** 2 - g ** 2
   v = math.pi * v                       # multiply by pi
   return v
 
 
-# If the axis of rotation is parellel to f:
-def cylinderMethod(functions, x, interval):
+# If the axis of rotation is parellel to the functions:
+def shellMethod(functions, x, interval):
   a = interval[0]
   b = interval[1]
   f = functions[0]
   g = functions[1]
 
-  v = x * (f - g)                       # multiply x by f
+  v = x * abs(f - g)                    # absolute value of f - g
   v = Integral(v, (x, a, b)).doit()     # integrate x * (f - g)
   v = math.pi * 2 * v                   # multiply by 2pi 
   return v
 
 # Determines the upper and lower bounds from f and g
 def determineBounds(f):
-  return None
-
-# Determines the upper and lower function at a given interval
-def determineUpperFunction(f, interval):
   return None
 
 if __name__ == "__main__":
@@ -58,9 +54,9 @@ if __name__ == "__main__":
   f2containsy = 'y' in function2.split() and 'x' not in function2.split()
 
   # Defining the independent variable
-  if f1containsx and f2containsx:
+  if f1containsx:
     variable = Symbol('x')
-  elif f1containsy and f2containsy:
+  elif f1containsy:
     variable = Symbol('y')
   else:
     print("No variable given, exiting program.")
@@ -78,9 +74,6 @@ if __name__ == "__main__":
   lower_bound = input("  to?: ")
   interval = [upper_bound, lower_bound]
 
-    
-
-
   # Defining the axis of rotation
   axis = input("on the axis: ")
 
@@ -92,7 +85,6 @@ if __name__ == "__main__":
   else:
     print("No axis given, exiting program.")
     sys.exit(0)
-
 
   # Print result
   print(bump)
