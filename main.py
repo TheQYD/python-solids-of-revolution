@@ -6,13 +6,16 @@ Volume of Solids of Revolution Calculator
 
 from sympy import Integral, Symbol, sympify
 
+import argparse
 import math
 import sys
 
-axes = ('x', 'y')
-bump = "\n" + "-" * 80 + "\n"
 
-# If the axis of rotation is perpendicular to the functions:
+# Global Variables
+axes = ('x', 'y')
+bump = "_" * 80 + "\n"
+
+# If the axis of rotation is parallel to the functions:
 def discMethod(functions, x, interval):
   a = interval[0]
   b = interval[1]
@@ -26,7 +29,7 @@ def discMethod(functions, x, interval):
   return v
 
 
-# If the axis of rotation is parellel to the functions:
+# If the axis of rotation is perpendicular to the functions:
 def shellMethod(functions, x, interval):
   a = interval[0]
   b = interval[1]
@@ -39,13 +42,35 @@ def shellMethod(functions, x, interval):
   v = "pi " + str(v)
   return v
 
-# Determines the upper and lower bounds from f and g
-def determineBounds(f):
-  return None
+def printResult(functions, axis, volume):
+  result = "The volume of the solid formed by rotating the function {0} about the {1}-axis is: \nV = {2}"
+  result = result.format(functions, axis, volume)
+  print(bump + result + bump)
 
-# Determines what variable the function f is in terms of
+def setAxis():
+  axis = input("on the axis: ")
+  
+  if axis in axes:
+    return axis
+  else:
+    return "No axis given, exiting program."
+    sys.exit(0)
+
+# Defining the functions "f" and "g"
+def setFunctions():
+  function1 = input("The first function f: ")
+  function2 = input("The second function g: ")
+  return function1, function2 
+
+# Defining the interval
+def setInterval():
+  upper_bound = input("from?: ")
+  lower_bound = input("  to?: ") 
+  return upper_bound, lower_bound
+
+# Setting the differential variable to either x or y
 # Note: Invert function g if function f is in terms of another axis
-def parseFunctionVariables(functions):
+def setDifferential(functions):
   function1 = functions[0]
   function2 = functions[1]
 
@@ -57,54 +82,35 @@ def parseFunctionVariables(functions):
   if f1containsx or f1containsy:
     return 'x' if f1containsx else 'y'
   else:
-    print("No variable given, exiting program.")
+    return "No variable given, exiting program."
     sys.exit(0)
 
 if __name__ == "__main__":
   print(bump)
   
-  # Defining functions "f" and "g"
-  function1 = input("The first function f: ")
-  function2 = input("The second function g: ")
-  functions = [function1, function2]
+  # Setting the functions "f" and "g"
+  functions = setFunctions()
 
-  variable = Symbol(parseFunctionVariables(functions))
+  # Setting the differential variable to either x or y
+  differential = Symbol(setDifferential(functions))
 
   # Sympify functions "f" and "g"
-  functions[0] = sympify(functions[0])
-  functions[1] = sympify(functions[1])
+  functions = sympify(functions)
 
-  # Create list of functions
-  #functions = [function1, function2]
+  # Setting the interval
+  interval = setInterval()
 
-  # Defining the interval
-  upper_bound = input("from?: ")
-  lower_bound = input("  to?: ")
-  interval = [upper_bound, lower_bound]
-
-
-  # Defining the axis of rotation
-  axis = input("on the axis: ")
-
-  # Checking if axis is x or y
-  if axis in axes:
-    isParallel = str(axis) == str(variable)
-    isPerpendicular = str(axis) != str(variable)
-  else:
-    print("No axis given, exiting program.")
-    sys.exit(0)
+  # Setting the axis of rotation
+  axis = setAxis()
 
   # Determines whether functions are parallel or perpendicular to axis
+  isParallel = str(axis) == str(differential) 
+
+  # If parallel, use disc method. If perpendicular, use shell method.
   if isParallel:
-    print("DISC!")
-    volume = discMethod(functions, variable, interval)    # <-- parallel
-  elif isPerpendicular:
-    print("SHELL!")
-    volume = shellMethod(functions, variable, interval)   # <-- perpendicular
+    volume = discMethod(functions, differential, interval)    # <-- parallel
+  else:
+    volume = shellMethod(functions, differential, interval)   # <-- perpendicular
 
   # Print result
-  print(bump)
-  result = "The volume of the solid formed by rotating the function {0} about the {1}-axis is: \nV = {2}"
-  result = result.format(functions, axis, volume)
-  print(result)
-  print(bump)
+  printResult(functions, axis, volume)
