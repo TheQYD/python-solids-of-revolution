@@ -17,11 +17,18 @@ def discMethod(functions, x, interval):
   b = interval[1]
   f = functions[0]
   g = functions[1]
-
+  
   v = abs(f ** 2 - g ** 2)              # absolute value of f squared - g squared
+  print("f**2: ", v)
+
   v = Integral(v, (x, a, b)).doit()     # integrate f ** 2 - g ** 2
-  v = math.pi * v                       # multiply by pi
-  return v
+  print("f_integrated: ", v)
+
+  #v = math.pi * v                       # multiply by pi
+  v = "pi " + str(v)
+  print("volume: ", v)
+
+  #return v
 
 
 # If the axis of rotation is parellel to the functions:
@@ -33,12 +40,15 @@ def shellMethod(functions, x, interval):
 
   v = x * abs(f - g)                    # absolute value of f - g
   v = Integral(v, (x, a, b)).doit()     # integrate x * (f - g)
-  v = math.pi * 2 * v                   # multiply by 2pi 
+  #v = math.pi * 2 * v                   # multiply by 2pi 
+  v = "pi " + str(v)
   return v
 
 # Determines the upper and lower bounds from f and g
 def determineBounds(f):
   return None
+
+
 
 if __name__ == "__main__":
   print(bump)
@@ -73,12 +83,18 @@ if __name__ == "__main__":
   upper_bound = input("from?: ")
   lower_bound = input("  to?: ")
   interval = [upper_bound, lower_bound]
+  print(interval)
+
 
   # Defining the axis of rotation
   axis = input("on the axis: ")
 
+  discMethod(functions, variable, interval)
+  
+'''
   # Determines whether functions are parallel or perpendicular to axis
   if axis == variable:
+    print("DISC!")
     volume = discMethod(functions, variable, interval)    # <-- parallel
   elif axis != variable:
     volume = shellMethod(functions, variable, interval)   # <-- perpendicular
@@ -92,3 +108,4 @@ if __name__ == "__main__":
   result = result.format(functions, axis, volume)
   print(result)
   print(bump)
+'''
