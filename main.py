@@ -13,7 +13,7 @@ import sys
 
 # Global Variables
 axes = ('x', 'y')
-bump = "_" * 80 + "\n"
+bump = "\n" + "_" * 80 + "\n"
 
 # If the axis of rotation is parallel to the functions:
 def discMethod(functions, x, interval):
