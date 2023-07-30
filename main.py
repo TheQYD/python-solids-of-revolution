@@ -6,7 +6,6 @@ Volume of Solids of Revolution Calculator
 
 from sympy import Integral, Symbol, sympify
 
-import argparse
 import math
 import sys
 
